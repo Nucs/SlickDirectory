@@ -97,7 +97,7 @@ namespace SlickDirectory
                 tempMenu.DropDownItems.Add(new ToolStripSeparator());
 
 
-                var createTempDirectoryMenuItem = new ToolStripMenuItem("Create");
+                var createTempDirectoryMenuItem = new ToolStripMenuItem($"Create ({_hotKeyCreateTempDirectory})");
                 createTempDirectoryMenuItem.Click += (o, args) => Task.Run(() => _businessLayer.OnHotkey_CreateTempDirectory());
                 tempMenu.DropDownItems.Add(createTempDirectoryMenuItem);
 
