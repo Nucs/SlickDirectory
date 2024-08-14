@@ -377,31 +377,40 @@ public class ClipboardHandler
         targetFileName ??= "clipboard";
         try
         {
+            void SaveImageIfNotExists(Image data, string tempDir, string targetFileName, ImageFormat format, string extension)
+            {
+                string filePath = Path.Combine(tempDir, Path.ChangeExtension(targetFileName, extension));
+                if (!File.Exists(filePath))
+                {
+                    data.Save(filePath, format);
+                }
+            }
+
             if (data.RawFormat.Equals(ImageFormat.Jpeg))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "jpg")), ImageFormat.Jpeg);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Jpeg, "jpg");
             else if (data.RawFormat.Equals(ImageFormat.Png))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "png")), ImageFormat.Png);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Png, "png");
             else if (data.RawFormat.Equals(ImageFormat.Gif))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "gif")), ImageFormat.Gif);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Gif, "gif");
             else if (data.RawFormat.Equals(ImageFormat.Bmp))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "bmp")), ImageFormat.Bmp);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Bmp, "bmp");
             else if (data.RawFormat.Equals(ImageFormat.Emf))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "emf")), ImageFormat.Emf);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Emf, "emf");
             else if (data.RawFormat.Equals(ImageFormat.Wmf))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "wmf")), ImageFormat.Wmf);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Wmf, "wmf");
             else if (data.RawFormat.Equals(ImageFormat.Exif))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "exif")), ImageFormat.Exif);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Exif, "exif");
             else if (data.RawFormat.Equals(ImageFormat.Tiff))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "tiff")), ImageFormat.Tiff);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Tiff, "tiff");
             else if (data.RawFormat.Equals(ImageFormat.MemoryBmp))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "bmp")), ImageFormat.Bmp);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Bmp, "bmp");
             else if (data.RawFormat.Equals(ImageFormat.Icon))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "ico")), ImageFormat.Icon);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Icon, "ico");
             else
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "bmp")), ImageFormat.Bmp);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Bmp, "bmp");
 
             if (!data.RawFormat.Equals(ImageFormat.Png))
-                data.Save(Path.Combine(tempDir, Path.ChangeExtension(targetFileName, "png")), ImageFormat.Png);
+                SaveImageIfNotExists(data, tempDir, targetFileName, ImageFormat.Png, "png");
         }
         catch (Exception ex)
         {

@@ -8,7 +8,7 @@ SlickDirectory empowers the clipboard and temporary scrach/work directories for 
     - Clipboard extraction allowing for fast:
       1. Convert any image from clipboard/url/file to png
          - Supporting WEBP (never deal with this devil again)
-         - Supporting ICO (convert to x32, x64, x128, x256, x512, x1024 instantly). 
+         - Supporting ICO
          - Supporting Discord Image copy to clipboard.
       2. Download url/s from clipboard.
       3. Copy files
