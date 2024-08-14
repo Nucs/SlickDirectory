@@ -72,12 +72,15 @@ jobs:
         $version_parts = $latest_version.Split('.')
         $new_patch = [int]$version_parts[2] + 1
         $new_version = "{0}.{1}.{2}" -f $version_parts[0], $version_parts[1], $new_patch
-        echo "NEW_VERSION=$new_version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        echo "NEW_VERSION=$new_version" >> $env:GITHUB_OUTPUT
 
     - name: Create ZIP file
       shell: pwsh
       run: |
-        Compress-Archive -Path "./app/*" -DestinationPath "slickdirectory-${{ steps.increment_version.outputs.NEW_VERSION }}-windows.zip" -Force
+        $version = "${{ steps.increment_version.outputs.NEW_VERSION }}"
+        $zipName = "slickdirectory-${version}-windows-anycpu-portable.zip"
+        Compress-Archive -Path "./app/*" -DestinationPath $zipName -Force
+        echo "ZIP_NAME=$zipName" >> $env:GITHUB_OUTPUT
 
     - name: Create Release
       id: create_release
@@ -96,6 +99,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./slickdirectory-${{ steps.increment_version.outputs.NEW_VERSION }}-windows.zip
-        asset_name: slickdirectory-${{ steps.increment_version.outputs.NEW_VERSION }}-windows.zip
+        asset_path: ./${{ steps.create_zip_file.outputs.ZIP_NAME }}
+        asset_name: ${{ steps.create_zip_file.outputs.ZIP_NAME }}
         asset_content_type: application/zip
