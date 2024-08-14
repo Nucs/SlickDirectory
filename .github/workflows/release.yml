@@ -75,6 +75,7 @@ jobs:
         echo "NEW_VERSION=$new_version" >> $env:GITHUB_OUTPUT
 
     - name: Create ZIP file
+      id: create_zip_file
       shell: pwsh
       run: |
         $version = "${{ steps.increment_version.outputs.NEW_VERSION }}"
