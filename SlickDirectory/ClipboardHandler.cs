@@ -72,7 +72,10 @@ public class ClipboardHandler
 
                     if (ext == "url")
                     {
-                        await HandleUrl(tempDir, txt);
+                        foreach (var url in txt.Replace("\r", "").Split("\n", StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            await HandleUrl(tempDir, url);
+                        }
                     }
 
                     if (Clipboard.ContainsData(DataFormats.Rtf))
