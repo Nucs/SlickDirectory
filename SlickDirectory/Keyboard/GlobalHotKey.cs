@@ -78,6 +78,8 @@ public class GlobalHotKey : IEquatable<GlobalHotKey>
 
     public override string ToString()
     {
-        return $"{nameof(_modifiers)}: {_modifiers}, {nameof(_key)}: {_key}";
+        if (_modifiers == 0)
+            return ((Keys)_key).ToString();
+        return $"{((ModKeys)_modifiers).ToString().Replace('|', '+').Replace(',', '+').Replace(" ", "")}+{(Keys)_key}";
     }
 }
