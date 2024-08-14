@@ -9,6 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Additional Files", "Additio
 		icon-menu-1.png = icon-menu-1.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{CE5DD966-F84E-42DA-BDE0-254B91664721}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,5 +25,8 @@ Global
 		{F6509956-CA97-4B75-9043-276F2FB19CF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6509956-CA97-4B75-9043-276F2FB19CF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6509956-CA97-4B75-9043-276F2FB19CF9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CE5DD966-F84E-42DA-BDE0-254B91664721} = {82103314-7181-49AC-B646-90D53236C5D5}
 	EndGlobalSection
 EndGlobal
