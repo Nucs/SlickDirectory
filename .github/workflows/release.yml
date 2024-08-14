@@ -1,0 +1,105 @@
+name: .NET Build and Release
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'SlickDirectory/**'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Publish
+      run: dotnet publish --configuration Release --output ./publish
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: ./publish
+
+  release:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: app
+        path: ./app
+
+    - name: Get latest release
+      id: get_latest_release
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          try {
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            if (releases.data.length === 0) {
+              return '0.0.1';
+            }
+            return releases.data[0].tag_name.replace('v', '');
+          } catch (error) {
+            console.log('Error fetching releases:', error);
+            return '0.0.1';
+          }
+
+    - name: Increment version
+      id: increment_version
+      shell: pwsh
+      run: |
+        $latest_version = ${{steps.get_latest_release.outputs.result}}
+        $version_parts = $latest_version.Split('.')
+        $new_patch = [int]$version_parts[2] + 1
+        $new_version = "{0}.{1}.{2}" -f $version_parts[0], $version_parts[1], $new_patch
+        echo "NEW_VERSION=$new_version" >> $env:GITHUB_OUTPUT
+
+    - name: Create ZIP file
+      id: create_zip_file
+      shell: pwsh
+      run: |
+        $version = "${{ steps.increment_version.outputs.NEW_VERSION }}"
+        $zipName = "slickdirectory-${version}-windows-anycpu-portable.zip"
+        Compress-Archive -Path "./app/*" -DestinationPath $zipName -Force
+        echo "ZIP_NAME=$zipName" >> $env:GITHUB_OUTPUT
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.increment_version.outputs.NEW_VERSION }}
+        release_name: Release ${{ steps.increment_version.outputs.NEW_VERSION }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{ steps.create_zip_file.outputs.ZIP_NAME }}
+        asset_name: ${{ steps.create_zip_file.outputs.ZIP_NAME }}
+        asset_content_type: application/zip
