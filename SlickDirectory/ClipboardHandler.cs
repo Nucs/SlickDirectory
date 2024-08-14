@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 using ImageProcessor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SlickDirectory;
 
@@ -53,7 +55,6 @@ public class ClipboardHandler
                     txt = (string)Clipboard.GetData(DataFormats.Rtf);
                 }
 
-
                 if (!string.IsNullOrWhiteSpace(txt) && !Regex.IsMatch(txt, @"^\s*$", RegexOptions.Singleline))
                 {
                     var ext = ContentClassifier.Classify(txt);
@@ -61,6 +62,13 @@ public class ClipboardHandler
 
                     if (ext != "txt")
                         await File.WriteAllTextAsync(Path.Combine(tempDir, "clipboard.txt"), txt, token);
+
+                    if (ext == "json")
+                    {
+                        var formatted = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<JToken>(txt), Formatting.Indented);
+                        if (formatted != txt)
+                            await File.WriteAllTextAsync(Path.Combine(tempDir, "clipboard.formatted.json"), formatted, token);
+                    }
 
                     if (ext == "url")
                     {
